@@ -1,0 +1,52 @@
+let
+   true = \a. \b. a;
+   false = \a. \b. b;
+   if = \b x y. b x y;
+   not = \n. if n false true;
+   succ = \n. (\A B. A (n A B));
+   add = \n1 n2. n1 succ n2;
+   mult = \n1 n2. n1 (add n2) 0;
+   isZero = \n. n (\x. false) true;
+   pair = \a b c. c a b;
+   fst = \p. p true;
+   snd = \p. p false;
+   shiftInc = \p. pair (snd p) (succ (snd p));
+   pred = \n. fst (n shiftInc (pair 0 0));
+   I = \x. x;
+   double = \n. mult n 2;
+   compose = \f g. \X. f (g X);
+   empty = \x. true;
+   cons = pair;
+   isEmpty = \l. l (\a b. false);
+   head = fst;
+   tail = snd;
+   sub = \a b. b pred a;
+   lt = \a b. not (isZero (sub b a));
+   gt = \a b. not (isZero (sub a b));
+   eq = \a b. isZero (add (sub b a) (sub a b));
+   gte = \a b. isZero (sub b a);
+   lte = \a b. isZero (sub a b);
+   
+   Y = \f. (\x.f (x x)) (\x.f (x x));
+  
+   len = Y \R. \l. if(isEmpty l) 0 (succ (R (tail l)));
+   sum = Y \R. \l. if (isEmpty 0) 0 (add (head l) (R (tail)));
+   
+   D = \R. \a b. if (lt a b) 0 (succ (R (sub a b) b));
+   div = \a b. if (isZero b) 0 (Y D a b);
+
+   M = \R. \a b. if (lt a b) a (R (sub a b) b); 
+   mod = \a b. if (lt a b) a (Y M a b);
+
+   P = \R. \a b. if (gte a b) true
+               (if (eq (mod b a) 0) false
+                  (R (succ a) b));
+
+   isPrime = \n. if (lt n 2) false (Y P 2 n);
+
+
+   
+
+in 
+isPrime 1
+

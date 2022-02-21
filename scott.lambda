@@ -1,0 +1,43 @@
+let
+
+true = \a b. a;
+false = \a b. b;
+pair = \a b c. c a b;
+fst = \p. p true;
+snd = \p. p false;
+if = \b x y. b x y;
+
+not = \n. if n false true;
+
+Null = pair false false; -- false
+Node = \b t1 t2. pair true (pair b (pair t1 t2));
+
+isNull = \t. not (fst t);
+isNode = \t. fst t;
+value = \t. if (isNode t) (fst (snd t)) Null;
+leftTree = \t. if (isNode t) (fst (snd (snd t))) Null;
+rightTree = \t. if (isNode t) (snd (snd (snd t))) Null;
+
+Y = \f. (\x.f (x x)) (\x.f (x x));
+treeOr = Y \R. \t. if  (isNode t)
+                            ((value t) 
+                                true
+                                (if (R (leftTree t))
+                                    true
+                                    (R (rightTree t))
+                                )
+                            )
+                            false;
+
+trueLeaf = Node true Null Null;
+falseLeaf = Node false Null Null;
+
+
+root = Node false
+        (Node false falseLeaf falseLeaf) 
+        (Node false 
+            (Node true falseLeaf falseLeaf)
+            (Node false falseLeaf falseLeaf)
+        );  
+in
+treeOr root
